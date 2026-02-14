@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRISH PUZZLE QUESTIONS</title>
+<style>
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#0f172a;
+  color:#fff;
+}
+.hidden{display:none;}
+.center{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  height:100vh;
+  text-align:center;
+}
+button{
+  padding:12px 22px;
+  font-size:16px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  background:#22c55e;
+  color:#000;
+  margin-top:15px;
+}
+input{
+  padding:10px;
+  font-size:16px;
+  border-radius:6px;
+  border:none;
+  margin-top:10px;
+}
+#game{
+  padding:20px;
+}
+.topbar{
+  display:flex;
+  justify-content:space-between;
+  font-weight:bold;
+}
+#quote{
+  margin-top:15px;
+  font-style:italic;
+  color:#38bdf8;
+}
+.certificate{
+  border:4px solid gold;
+  padding:30px;
+  background:#020617;
+}
+</style>
+</head>
+<body>
+
+<!-- NAME SCREEN -->
+<div id="nameScreen" class="center">
+  <h1>TRISH PUZZLE QUESTIONS</h1>
+  <p>Enter Your Name to Start</p>
+  <input id="playerName" placeholder="Your Name">
+  <button onclick="startIntro()">START</button>
+</div>
+
+<!-- INTRO SCREEN -->
+<div id="intro" class="center hidden">
+  <h1>TRISH PUZZLE QUESTIONS</h1>
+  <p>Unlimited Puzzles • Riddles • Logic</p>
+</div>
+
+<!-- MENU -->
+<div id="menu" class="center hidden">
+  <button onclick="startGame()">▶ PLAY UNLIMITED QUESTIONS</button>
+</div>
+
+<!-- GAME -->
+<div id="game" class="hidden">
+  <div class="topbar">
+    <div id="levelText">Level: 1 / 100</div>
+    <div id="pointsText">Points: 0</div>
+    <div id="livesText">❤️❤️❤️</div>
+  </div>
+  <h2 id="question"></h2>
+  <input id="answer" placeholder="Your Answer">
+  <br>
+  <button onclick="checkAnswer()">Submit</button>
+  <button onclick="useHint()">Hint (-30)</button>
+  <p id="quote"></p>
+</div>
+
+<!-- CERTIFICATE -->
+<div id="certificate" class="center hidden">
+  <div class="certificate">
+    <h1>TRISH PUZZLE QUESTIONS</h1>
+    <h2>CERTIFICATE OF ACHIEVEMENT</h2>
+    <p>This is proudly awarded to</p>
+    <h2 id="certName"></h2>
+    <p>Congratulations! 🎉<br>
+    You have successfully completed all 100 levels.<br>
+    A small gift from us 🧠✨</p>
+    <p id="certDate"></p>
+  </div>
+</div>
+
+<script>
+let name="";
+let level=1;
+let points=0;
+let lives=3;
+let checkpoint=1;
+
+const questions=[
+  {q:"What has keys but can't open locks?",a:"keyboard",h:"Used with computer"},
+  {q:"What comes once in a minute, twice in a moment?",a:"m",h:"It's a letter"},
+  {q:"If 2+3=8 and 3+4=15, then 4+5=?",a:"24",h:"Multiply"},
+  {q:"I speak without a mouth and hear without ears. Who am I?",a:"echo",h:"Sound"}
+];
+let current;
+
+function startIntro(){
+  name=document.getElementById('playerName').value.trim();
+  if(!name)return alert('Enter your name');
+  nameScreen.classList.add('hidden');
+  intro.classList.remove('hidden');
+  setTimeout(()=>{
+    intro.classList.add('hidden');
+    menu.classList.remove('hidden');
+  },2000);
+}
+
+function startGame(){
+  menu.classList.add('hidden');
+  game.classList.remove('hidden');
+  loadQuestion();
+}
+
+function loadQuestion(){
+  current=questions[Math.floor(Math.random()*questions.length)];
+  document.getElementById('question').innerText=current.q;
+  document.getElementById('answer').value="";
+  document.getElementById('levelText').innerText=`Level: ${level} / 100`;
+  document.getElementById('pointsText').innerText=`Points: ${points}`;
+  document.getElementById('livesText').innerText='❤️'.repeat(lives);
+}
+
+function checkAnswer(){
+  let ans=document.getElementById('answer').value.trim().toLowerCase();
+  if(ans===current.a){
+    points+=10;
+    level++;
+    document.getElementById('quote').innerText="🔥 OHH! BRO YOU'RE ON FIRE TODAY!";
+    if(level>100)return finishGame();
+    if((level-1)%10===0)checkpoint=level;
+    setTimeout(loadQuestion,1500);
+  }else{
+    lives--;
+    document.getElementById('quote').innerText="😔 BRO YOU TRIED WELL BUT BETTER LUCK NEXT TIME";
+    if(lives===0){
+      level=checkpoint;
+      points=0;
+      lives=3;
+    }
+    setTimeout(loadQuestion,1500);
+  }
+}
+
+function useHint(){
+  if(points<30)return alert('Not enough points');
+  points-=30;
+  alert('Hint: '+current.h);
+  document.getElementById('pointsText').innerText=`Points: ${points}`;
+}
+
+function finishGame(){
+  game.classList.add('hidden');
+  certificate.classList.remove('hidden');
+  certName.innerText=name;
+  certDate.innerText=new Date().toDateString();
+}
+</script>
+</body>
+</html>
